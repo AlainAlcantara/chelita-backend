@@ -10,6 +10,11 @@ db.query('SELECT NOW()')
 
 app.use(express.json());
 
+const rolesRoutes = require('./src/routes/roles');
+app.use('/roles', rolesRoutes);
+console.log('📢 Ruta /roles cargada');
+
+
 // Ruta de prueba
 app.get('/', (req, res) => {
   res.send('Sistema Chelita funcionando desde backend 🚀');
