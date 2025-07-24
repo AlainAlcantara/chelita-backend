@@ -11,6 +11,14 @@ db.query('SELECT NOW()')
 app.use(express.json());
 
 const rolesRoutes = require('./src/routes/roles');
+const usuariosRoutes = require('./src/routes/usuarios');
+const platosRoutes = require('./src/routes/platos');
+const categoriasRoutes = require('./src/routes/categorias');
+const estadosPedidoRoutes = require('./src/routes/estadosPedido');
+app.use('/estados_pedido', estadosPedidoRoutes);
+app.use('/categorias', categoriasRoutes);
+app.use('/platos', platosRoutes);
+app.use('/usuarios', usuariosRoutes);
 app.use('/roles', rolesRoutes);
 console.log('📢 Ruta /roles cargada');
 
