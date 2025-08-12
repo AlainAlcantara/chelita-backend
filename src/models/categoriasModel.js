@@ -1,38 +1,28 @@
 // src/models/categoriasModel.js
 const db = require('../config/db');
 
-const obtenerCategorias = async () => {
-  const resultado = await db.query('SELECT * FROM categorias');
-  return resultado.rows;
+const obtenerCategorias = async (incluirInactivos = false) => {
+  const sql = incluirInactivos
+    ? 'SELECT * FROM categorias ORDER BY id_categoria'
+    : "SELECT * FROM categorias WHERE estado='activo' ORDER BY id_categoria";
+  const r = await db.query(sql);
+  return r.rows;
 };
 
 const registrarCategoria = async (nombre, descripcion) => {
-  const resultado = await db.query(
-    'INSERT INTO categorias (nombre, descripcion) VALUES ($1, $2) RETURNING *',
-    [nombre, descripcion]
+  const r = await db.query(
+    'INSERT INTO categorias (nombre, descripcion) VALUES ($1,$2) RETURNING *',
+    [nombre, descripcion || null]
   );
-  return resultado.rows[0];
+  return r.rows[0];
 };
 
-const actualizarCategoria = async (id, nombre, descripcion) => {
-  const resultado = await db.query(
-    'UPDATE categorias SET nombre = $1, descripcion = $2 WHERE id_categoria = $3 RETURNING *',
-    [nombre, descripcion, id]
+const actualizarCategoria = async (id, nombre, descripcion, estado) => {
+  const r = await db.query(
+    'UPDATE categorias SET nombre=$1, descripcion=$2, estado=COALESCE($3, estado) WHERE id_categoria=$4 RETURNING *',
+    [nombre, descripcion, estado, id]
   );
-  return resultado.rows[0];
+  return r.rows[0];
 };
 
-const eliminarCategoria = async (id) => {
-  const resultado = await db.query(
-    'UPDATE categorias SET estado = $1 WHERE id_categoria = $2 RETURNING *',
-    ['inactivo', id]
-  );
-  return resultado.rows[0];
-};
-
-module.exports = {
-  obtenerCategorias,
-  registrarCategoria,
-  actualizarCategoria,
-  eliminarCategoria
-};
+module.exports = { obtenerCategorias, registrarCategoria, actualizarCategoria };
